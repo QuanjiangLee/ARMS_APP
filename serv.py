@@ -18,6 +18,7 @@ BIND_INFO = (HOST, PORT)
 
 class MyThread(Thread):
     def __init__(self, sock_fd, clnt):
+        super().__init__()
         self.local_time = get_curtime()
         self.sock = sock_fd
         self.hostIP = clnt
