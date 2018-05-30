@@ -43,9 +43,6 @@ def get_reply_info(sock, user_no=NO_SPECIFIC):
     reply = None
     message = None
     try:
-        ready = select.select([sock], [], [], 35)
-        #time.sleep(0.15)
-        if ready[0]:
             buf = sock.recv(HEAD_SIZE)
             print("---**********i****"+str(len(buf)))
             rpl, rest_pkt_size = struct.unpack(HEAD_FORMAT, buf)
@@ -87,6 +84,13 @@ def com_check_passwd(user_no, user_pass):
 
 def com_get_user_info():
     ret_count = get_user_info()
+    ret = ''
+
+    if len(ret_count) > 0:
+        for index in ret_count:
+            ret += str(index[0])+'|'+str(index[1])+'|'+str(index[2])+'|'+str(index[4])+'|'+str(index[5])+'\n'
+    return ret
+'''
     ret = []
     if len(ret_count) > 0:
         for index in ret_count:
@@ -99,11 +103,19 @@ def com_get_user_info():
             dict["user_mask"] = index[5]
             ret.append(dict)
     return ret
+'''
 
 def com_get_car_parts():
     ret_count = get_car_parts()
-    ret = []
+    ret = ''
+
     if len(ret_count) > 0:
+        for index in ret_count:
+            ret += str(index[0])+'|'+str(index[1])+'|'+str(index[2])+'|'\
+                +'hah'+'|'+'100m'+'|'+str(index[5])+'|'\
+                +str(index[6])+'|'+str(index[7])+'\n'
+    return ret
+'''
         for index in ret_count:
             dict = {}
             dict["partId"] = index[0]
@@ -116,9 +128,18 @@ def com_get_car_parts():
             dict["partDate"] = index[6]
             ret.append(dict)
     return ret
-
+'''
 def com_get_repair_statistics():
     ret_count = get_repair_statistics(sta_type='normal',curDay='today')
+    ret = ''
+
+    if len(ret_count) > 0:
+        for index in ret_count:
+            ret += str(index[0])+'|'+str(index[1])+'|'+str(index[2])+'|'\
+                +str(index[3])+'|'+str(index[4])+'|'+str(index[5])+'|'\
+                +str(index[6])+'|'+str(index[7])+'\n'
+    return ret
+'''
     ret = []
     if len(ret_count) > 0:
         for index in ret_count:
@@ -132,9 +153,19 @@ def com_get_repair_statistics():
             dict["personId"] = index[6]
             ret.append(dict)
     return ret
+'''
 
 def com_get_repair_info(user_id=None):
     ret_count = get_repair_info(user_id)
+    ret = ''
+
+    if len(ret_count) > 0:
+        for index in ret_count:
+            ret += str(index[0])+'|'+str(index[1])+'|'+str(index[2])+'|'\
+                +str(index[3])+'|'+str(index[4])+'|'+str(index[5])+'|'\
+                +str(index[6])+'|'+str(index[7])+'\n'
+    return ret
+'''
     ret = []
     if len(ret_count) > 0:
         for index in ret_count:
@@ -148,25 +179,26 @@ def com_get_repair_info(user_id=None):
             dict["personId"] = index[6]
             ret.append(dict)
     return ret
+'''
 
 def com_add_user_info(info):
-    user_name, user_nickname, user_sex, user_mask, user_passwd = info.split('\n')
-    set_result = add_user_info(user_name, user_nickname, user_sex, user_mask, user_passwd)
+    user_name, user_nickname, user_sex = info.split('\n')
+    set_result = add_user_info(user_name, user_nickname, user_sex)
     if set_result > 0:
         return True
     else:
         return False
    
 def com_update_user_info(info):
-    user_id, user_name, user_nickname, user_sex, user_mask = info.split('\n')
-    set_result = update_user_info(user_id, user_name, user_nickname, user_sex, user_mask)
+    user_id, user_name, user_nickname, user_sex = info.split('\n')
+    set_result = update_user_info(user_id, user_name, user_nickname, user_sex)
     if set_result > 0:
         return True
     else:
         return False
 
 def com_del_user_info(info):
-    user_id = info.split('\n')
+    user_id = info.split("\n")[0]
     set_result = del_user_info(user_id)
     if set_result > 0:
         return True
@@ -174,7 +206,7 @@ def com_del_user_info(info):
         return False
 
 def com_reset_user_password(info):
-    user_id = info.split('\n')
+    user_id = info.split("\n")[0]
     set_result = reset_user_password(user_id)
     if set_result > 0:
         return True
@@ -182,16 +214,16 @@ def com_reset_user_password(info):
         return False
 
 def com_add_car_part(info):
-    user_id, partName, partNumber, partType, partSize, partPrice = info.split('\n')
-    set_result = add_car_part(user_id, partName, partNumber, partType, partSize, partPrice)
+    partName, partNumber, partPrice = info.split('\n')
+    set_result = add_car_part(1, partName, partNumber, None, 0, partPrice)
     if set_result > 0:
         return True
     else:
         return False
 
 def com_update_car_part(info):
-    partId,partName, partNumber, partType, partSize, partPrice = info.split('\n')
-    set_result = update_car_part(partId,partName, partNumber, partType=None, partSize=0, partPrice=0.0)
+    partId,partName, partNumber, partPrice = info.split('\n')
+    set_result = update_car_part(partId,partName, partNumber, None, 0, partPrice=0.0)
     if set_result > 0:
         return True
     else:

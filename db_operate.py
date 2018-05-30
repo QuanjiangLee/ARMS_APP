@@ -18,9 +18,9 @@ def check_user_passwd(user_name, user_passwd):
     return ret
 
 # 用户增珊改查
-def add_user_info(user_name, user_nickname="小修", user_sex="男", user_mask="It\'s a lazy man!", user_passwd="123456"):
+def add_user_info(user_name, user_nickname="小修", user_sex="男", user_mask="Its a lazy man!", user_passwd="123456"):
     values= (user_name, user_nickname, user_sex, user_mask, user_passwd)
-    db_str = "insert into serviceApp_userinf (user_name， user_nickname，user_grant, user_sex， user_mask， user_passwd) values ('{0}', '{1}', 0, '{2}', '{3}', password('{4}'));"
+    db_str = "insert into serviceApp_userinf (user_name,user_nickname, user_grant, user_sex, user_mask, user_passwd) values ('{0}', '{1}', 0, '{2}', '{3}', password('{4}'));"
     dbStr = db_str.format( *values )
     print(dbStr)
     db_conn = DBMethods()
@@ -35,7 +35,7 @@ def get_user_info():
 
 def update_user_info(user_id, user_name, user_nickname, user_sex, user_mask):
     values= (user_id, user_name, user_nickname, user_sex, user_mask)
-    db_str = "update serviceApp_userinf set user_name='{1}'， user_nickname='{2}'， user_sex='{3}'， user_mask='{4}' where user_id = {0};"
+    db_str = "update serviceApp_userinf set user_name='{1}', user_nickname='{2}',user_sex='{3}',user_mask='{4}' where user_id = {0};"
     dbStr = db_str.format( *values )
     print(dbStr)
     db_conn = DBMethods()
@@ -71,8 +71,8 @@ def add_car_part(user_id, partName, partNumber, partType=None, partSize=0, partP
     return ret 
 
 def get_car_parts():
-    db_str = "select * from serviceApp_carparts;"
-    dbStr = db_str.format( *values )
+    dbStr = "select * from serviceApp_carparts;"
+    #dbStr = db_str.format( *values )
     print(dbStr)
     db_conn = DBMethods()
     ret = db_conn.selectMethods(dbStr)

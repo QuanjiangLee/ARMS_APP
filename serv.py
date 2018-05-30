@@ -27,7 +27,7 @@ class MyThread(Thread):
 
     def auth(self):
         # 发送认证消息
-        send_info(self.sock, "ATH", "WHO ARE YOU")
+        #send_info(self.sock, "ATH", "WHO ARE YOU")
         # 接收用编号
         try:
             # 获取用户命令
@@ -69,8 +69,10 @@ class MyThread(Thread):
         '''
         user_no = self.auth()
         if user_no == False:
+            send_info(self.sock, "CNO", "ATH ERR", user_no)
             self.end_connection()
             return False
+        send_info(self.sock, "COK", "ATH OK", user_no)
         while not self.disconnected:
             # 获取用户命令
             try:
@@ -84,26 +86,26 @@ class MyThread(Thread):
             if "SPT" == cmd:
                 send_data = com_get_car_parts()
                 if send_data:
-                    send_info(self.sock, "SPT", send_info, user_no)
+                    send_info(self.sock, "SPT", send_data, user_no)
                 else:
                     send_info(self.sock, "SPT", "WRONG SPT", user_no)
             elif "SUC" == cmd:
                 send_data = com_get_user_info()
                 if send_data:
-                    send_info(self.sock, "SUC",send_info, user_no)
+                    send_info(self.sock, "SUC",send_data, user_no)
                 else:
                     send_info(self.sock, "SUC", "WRONG SUC", user_no)
 
             elif "SRH" == cmd:
                 send_data = com_get_repair_info()
                 if send_data:
-                    send_info(self.sock,"SRC", send_info, user_no)
+                    send_info(self.sock,"SRC", send_data, user_no)
                 else:
                     send_info(self.sock,"SRC", "WRONG SRH", user_no)
             elif "RMS" == cmd:
                 send_data = com_get_repair_statistics()
                 if send_data:
-                    send_info(self.sock, "RMS", send_info, user_no)
+                    send_info(self.sock, "RMS", send_data, user_no)
                 else:
                     send_info(self.sock, "RMS", "WRONG RMS", user_no)
             elif "AUC" == cmd:
