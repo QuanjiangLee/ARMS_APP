@@ -8,7 +8,7 @@ import select
 from threading import Thread
 from mylog import log, xtrace, error_log, get_curtime
 from common import send_info, reply_client, get_reply_info, kill_myself,com_check_name, com_check_passwd,\
-com_add_user_info,com_get_user_info, com_update_user_info, com_update_user_password， com_del_user_info, com_reset_user_password,\
+com_add_user_info,com_get_user_info, com_update_user_info, com_update_user_password, com_del_user_info, com_reset_user_password,\
 com_add_car_part, com_get_car_parts,com_update_car_part, com_del_car_part, com_get_repair_statistics,\
 com_add_repair_info,com_change_repair_status, com_get_repair_info, com_get_repairing, com_update_repair_info, com_del_repair_info
 HOST = "0.0.0.0"
@@ -121,7 +121,7 @@ class MyThread(Thread):
                     send_info(self.sock, "AUC","AUC OK", user_no)
 
             elif "DUC" == cmd: #删除用户信息
-                if not com_del_user_info(i nfo):
+                if not com_del_user_info(info):
                     send_info(self.sock, "DUC", "WRONG DUC", user_no)
                 else:
                     send_info(self.sock, "DUC", "DUC OK", user_no)
@@ -139,7 +139,7 @@ class MyThread(Thread):
                 if not com_update_user_password(info, user_no):
                     send_info(self.sock, "UUP", "WRONG UUP", user_no)
                 else:
-                    send_info(self.sock, "UUP", "UUP OK", user_no
+                    send_info(self.sock, "UUP", "UUP OK", user_no)
             elif "APT" == cmd: #添加零件信息
                 if not com_add_car_part(info):
                     send_info(self.sock, "APT", "WRONG APT", user_no)
@@ -165,7 +165,7 @@ class MyThread(Thread):
                 if not com_change_repair_status(info):
                     send_info(self.sock, "CRS", "WRONG CRS", user_no)
                 else:
-                    send_info(self.sock, "CRS", "CRS OK", user_no
+                    send_info(self.sock, "CRS", "CRS OK", user_no)
             elif "END" == cmd: #客户端下线
                 # record user log off
                 log("%s %s OFFLINE" % (user_no, self.hostIP))
