@@ -42,6 +42,15 @@ def update_user_info(user_id, user_name, user_nickname, user_sex, user_mask):
     ret = db_conn.updateMethods(dbStr)
     return ret   
 
+def update_user_password(user_no, new_passwd):
+    values= (user_no, new_passwd)
+    db_str = "update serviceApp_userinf set user_passwd='{1}' where user_name = '{0}';"
+    dbStr = db_str.format( *values )
+    print(dbStr)
+    db_conn = DBMethods()
+    ret = db_conn.updateMethods(dbStr)
+    return ret
+
 def del_user_info(user_id):
     values= (user_id)
     db_str = "delete from serviceApp_userinf where user_id = {0};"
@@ -134,6 +143,15 @@ def add_repair_info(user_id, repairName, partDetailsDict, repairDetails='No deta
     ret = db_conn.updateMethods(dbStr)
     return ret
 
+def change_repair_status(repairId, repairdDate):
+    values=(repairId, repairdDate)
+    db_str = "update serviceApp_repairinfo set repair_status=1, repairdDate='{1}' where repairId={0};"
+    dbStr = db_str.format( *values )
+    print(dbStr)
+    db_conn = DBMethods()
+    ret = db_conn.updateMethods(dbStr)
+    return ret
+
 
 def get_repairPrice(partId):
     values = (partId)
@@ -144,12 +162,33 @@ def get_repairPrice(partId):
     ret = db_conn.selectMethods(dbStr)
     return ret
 
+def get_user_id(user_no):
+    values = (user_no)
+    db_str = "select user_id from serviceApp_userinf where user_name={0};"
+    dbStr = db_str.format( *values )
+    print(dbStr)
+    db_conn = DBMethods()
+    ret = db_conn.selectMethods(dbStr)
+    return ret 
+
+def get_repairing(user_id=None):
+    values = (user_id)
+    if user_id is None:
+        db_str = "select * from serviceApp_repairinfo where repair_status=0;"
+    else:
+        db_str = "select * from serviceApp_repairinfo where personId_id={0} and repair_status=0;"
+        dbStr = db_str.format( *values )
+    print(dbStr)
+    db_conn = DBMethods()
+    ret = db_conn.selectMethods(dbStr)
+    return ret
+
 def get_repair_info(user_id=None):
     values = (user_id)
     if user_id is None:
-        db_str = "select * from serviceApp_repairinfo;"
+        db_str = "select * from serviceApp_repairinfo where repair_status=1;"
     else:
-        db_str = "select * from serviceApp_repairinfo where personId_id={0};"
+        db_str = "select * from serviceApp_repairinfo where personId_id={0} and repair_status=1;"
         dbStr = db_str.format( *values )
     print(dbStr)
     db_conn = DBMethods()

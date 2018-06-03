@@ -8,9 +8,9 @@ import select
 from threading import Thread
 from mylog import log, xtrace, error_log, get_curtime
 from common import send_info, reply_client, get_reply_info, kill_myself,com_check_name, com_check_passwd,\
-com_add_user_info,com_get_user_info, com_update_user_info, com_del_user_info, com_reset_user_password,\
+com_add_user_info,com_get_user_info, com_update_user_info, com_update_user_password， com_del_user_info, com_reset_user_password,\
 com_add_car_part, com_get_car_parts,com_update_car_part, com_del_car_part, com_get_repair_statistics,\
-com_add_repair_info,com_get_repair_info, com_update_repair_info, com_del_repair_info
+com_add_repair_info,com_change_repair_status, com_get_repair_info, com_get_repairing, com_update_repair_info, com_del_repair_info
 HOST = "0.0.0.0"
 PORT = 50005
 TreadNum = 0
@@ -83,74 +83,90 @@ class MyThread(Thread):
                 error_log("RECV INFO ERROR!")
                 print(error)
                 break
-            if "SPT" == cmd:
+            if "SPT" == cmd: #查询配件信息
                 send_data = com_get_car_parts()
                 if send_data:
                     send_info(self.sock, "SPT", send_data, user_no)
                 else:
                     send_info(self.sock, "SPT", "WRONG SPT", user_no)
-            elif "SUC" == cmd:
+            elif "SUC" == cmd: #查询用户信息
                 send_data = com_get_user_info()
                 if send_data:
                     send_info(self.sock, "SUC",send_data, user_no)
                 else:
                     send_info(self.sock, "SUC", "WRONG SUC", user_no)
 
-            elif "SRH" == cmd:
+            elif "ARH" == cmd: #管理员查询所有工单
                 send_data = com_get_repair_info()
                 if send_data:
-                    send_info(self.sock,"SRC", send_data, user_no)
+                    send_info(self.sock,"ARH", send_data, user_no)
                 else:
-                    send_info(self.sock,"SRC", "WRONG SRH", user_no)
-            elif "RMS" == cmd:
-                send_data = com_get_repair_statistics()
+                    send_info(self.sock,"ARH", "WRONG ARH", user_no)
+            elif "SRH" == cmd: #维修工查询已完成工单
+                send_data = com_get_repairing(user_no)
                 if send_data:
-                    send_info(self.sock, "RMS", send_data, user_no)
+                    send_info(self.sock,"SRH", send_data, user_no)
                 else:
-                    send_info(self.sock, "RMS", "WRONG RMS", user_no)
-            elif "AUC" == cmd:
+                    send_info(self.sock,"SRH", "WRONG SRH", user_no)
+            elif "SRI" == cmd: # 维修工查询正在进行的工单
+                send_data = com_get_repairing(user_no)
+                if send_data:
+                    send_info(self.sock,"SRI", send_data, user_no)
+                else:
+                    send_info(self.sock,"SRI", "WRONG SRI", user_no)
+            elif "AUC" == cmd: #添加用户信息
                 if not com_add_user_info(info):
                     send_info(self.sock, "AUC","WRONG AUC", user_no)
                 else:
                     send_info(self.sock, "AUC","AUC OK", user_no)
 
-            elif "DUC" == cmd:
-                if not com_del_user_info(info):
+            elif "DUC" == cmd: #删除用户信息
+                if not com_del_user_info(i nfo):
                     send_info(self.sock, "DUC", "WRONG DUC", user_no)
                 else:
                     send_info(self.sock, "DUC", "DUC OK", user_no)
-            elif "MUC" == cmd:
+            elif "MUC" == cmd: #修改用户信息
                 if not com_update_user_info(info):
                     send_info(self.sock, "MUC", "WRONG MUC", user_no)
                 else:
                     send_info(self.sock, "MUC","MUC OK", user_no)
-            elif "RUP" == cmd:
+            elif "RUP" == cmd: #重置用户密码
                 if not com_reset_user_password(info):
                     send_info(self.sock, "RUP", "WRONG RUP", user_no)
                 else:
                     send_info(self.sock, "RUP", "RUP OK", user_no)
-            elif "APT" == cmd:
+            elif "UUP" == cmd: #修改用户密码
+                if not com_update_user_password(info, user_no):
+                    send_info(self.sock, "UUP", "WRONG UUP", user_no)
+                else:
+                    send_info(self.sock, "UUP", "UUP OK", user_no
+            elif "APT" == cmd: #添加零件信息
                 if not com_add_car_part(info):
                     send_info(self.sock, "APT", "WRONG APT", user_no)
                 else:
                     send_info(self.sock, "APT", "APT OK", user_no)
-            elif "DPT" == cmd:
+            elif "DPT" == cmd: #删除零件信息
                 if not com_del_car_part(info):
                     send_info(self.sock, "DPT", "WRONG DPT", user_no)
                 else:
                     send_info(self.sock, "DPT", "DPT OK", user_no)
-            elif "MPT" == cmd:
+            elif "MPT" == cmd: 
                 if not com_update_car_part(info):
                     send_info(self.sock, "MPT", "WRONG MPT", user_no)
                 else:
                     send_info(self.sock, "MPT", "MPT OK", user_no)
             
-            elif "SRO" == cmd:
-                if not com_add_repair_info(info):
-                    send_info(self.sock, "SRO", "WRONG RMS", user_no)
+            elif "SRO" == cmd: #添加一个维修单
+                if not com_add_repair_info(info, user_no):
+                    send_info(self.sock, "SRO", "WRONG SRO", user_no)
                 else:
-                    send_info(self.sock, "SRO", "RMS OK", user_no)
-            elif "END" == cmd:
+                    send_info(self.sock, "SRO", "SRO OK", user_no)
+            elif "CRS" == cmd: #改变维修单状态
+                if not com_change_repair_status(info):
+                    send_info(self.sock, "CRS", "WRONG CRS", user_no)
+                else:
+                    send_info(self.sock, "CRS", "CRS OK", user_no
+            elif "END" == cmd: #客户端下线
                 # record user log off
                 log("%s %s OFFLINE" % (user_no, self.hostIP))
                 self.end_connection()
