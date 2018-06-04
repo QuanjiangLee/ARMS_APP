@@ -87,15 +87,6 @@ def get_car_parts():
     ret = db_conn.selectMethods(dbStr)
     return ret
 
-def update_car_part(partId,partName, partNumber, partType=None, partSize=0, partPrice=0.0):
-    values= (partId,partName, partNumber, partType, partSize, partPrice)
-    db_str = "update serviceApp_carparts set partName='{1}', partNumber={2}, partType='{3}', partSize='{4}', partPrice={5} where partId = {0};"
-    dbStr = db_str.format( *values )
-    print(dbStr)
-    db_conn = DBMethods()
-    ret = db_conn.updateMethods(dbStr)
-    return ret
-
 def del_car_part(partId):
     values= (partId)
     db_str = "delete from serviceApp_carparts where partId = {0};"
@@ -105,38 +96,16 @@ def del_car_part(partId):
     ret = db_conn.updateMethods(dbStr)
     return ret
 
-# 汽修情况统计查看
-def get_repair_statistics(sta_type='normal',curDay='today'):
-    '''sta_type = ['normal', 'day']
-    '''
-    values = (sta_type, curDay)
-    if sta_type is 'normal':
-        dbStr = "select * from serviceApp_repairinfo;"
-    elif sta_type is 'day':
-        if curDay is 'today':
-            dbStr = "select * from serviceApp_repairinfo where date(repairDate) = curdate();"
-        else:
-            db_str = "select * from serviceApp_repairinfo where date(repairDate) = date_sub('{1}', interval 0 day);"
-            dbStr = db_str.format( *values )
-    print(dbStr)
-    db_conn = DBMethods()
-    ret = db_conn.selectMethods(dbStr)
-    return ret
-
 
 
 # 汽修工人功能
 
 # repairPrice 通过carparts表查询 
-
-def add_repair_info(user_id, repairName, partDetailsDict, repairDetails='No details'):
+ 
+def add_repair_info(user_id,repair_carName, repair_carPhone, partDetails, repair_fault, repairDetails, repairMask='No mask',repairingDate):
     totalPrice = 0.0
-    partDetails = ''
-    for part in partDetailsDict:    
-        totalPrice += get_repairPrice(part["partId"])[0][0] * part['partNumber']
-        partDetails += part['partName'] +' ' + part['partNumber'] +'\n'
-    values= (repairId, repairName, partDetails, totalPrice, repairDetails)
-    db_str = "insert into serviceApp_repairinfo (personId_id, repairName,partDetails, totalPrice, repairDetails) values ({0}, '{1}', '{2}', {3}, '{4}');"
+    values= (user_id,repair_carName, repair_carPhone, partDetails, repair_fault, repairDetails, repairMask,totalPrice,repairingDate)
+    db_str = "insert into serviceApp_repairinfo (personId_id, repair_carName, repair_carPhone, partDetails,repair_fault, repairDetails, repairMask, totalPrice, repairingDate) values ({0}, '{1}', '{2}', '{3}', '{4}','{5}','{6}',{7},'{8}');"
     dbStr = db_str.format( *values )
     print(dbStr)
     db_conn = DBMethods()
@@ -195,19 +164,12 @@ def get_repair_info(user_id=None):
     ret = db_conn.selectMethods(dbStr)
     return ret
 
-def update_repair_info(repairId, repairName,partDetailsDict, repairDetails='No details'):
-    totalPrice = 0.0
-    partDetails = ''
-    for part in partDetailsDict:    
-        totalPrice += get_repairPrice(part["partId"])[0][0] * part['partNumber']
-        partDetails += part['partName'] +' ' + part['partNumber'] +'\n'
-    values= (repairId, repairName, partDetails, totalPrice, repairDetails)
-    db_str = "update serviceApp_repairinfo set repairName='{1}',partDetails='{2}', totalPrice={3}, repairDetails='{4}' where repairId={0};"
-    dbStr = db_str.format( *values )
-    print(dbStr)
+def get_admin_repair_info():
+    dbStr = "select * from serviceApp_repairinfo ;"
     db_conn = DBMethods()
-    ret = db_conn.updateMethods(dbStr)
+    ret = db_conn.selectMethods(dbStr)
     return ret
+
 
 def del_repair_info(repairId):
     values= (repairId)

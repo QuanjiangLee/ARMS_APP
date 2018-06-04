@@ -5,9 +5,7 @@ import hashlib
 import struct
 import time
 from mylog import xtrace, SOCKET_IN, SOCKET_OUT, get_curtime
-from db_operate import check_user_name, check_user_passwd, add_user_info, get_user_info, update_user_info,del_user_info,\
-reset_user_password, add_car_part, get_car_parts, update_car_part, del_car_part, get_repair_statistics, add_repair_info,\
-change_repair_status, get_repair_info, update_repair_info,del_repair_info, get_user_id
+from db_operate import *
 NO_SPECIFIC = 'Unknown'
 HEAD_FORMAT = "!3sI"
 HEAD_SIZE = struct.calcsize(HEAD_FORMAT)
@@ -103,42 +101,50 @@ def com_get_car_parts():
                 +str(index[6])+'|'+str(index[7])+'\n'
     return ret
 
-def com_get_repair_statistics():
-    ret_count = get_repair_statistics(sta_type='normal',curDay='today')
-    ret = ''
-
-    if len(ret_count) > 0:
-        for index in ret_count:
-            ret += str(index[0])+'|'+str(index[1])+'|'+str(index[2])+'|'\
-                +str(index[3])+'|'+str(index[4])+'|'+str(index[5])+'|'\
-                +str(index[6])+'|'+str(index[7])+'\n'
-    return ret
 
 
 def com_get_repairing(user_no=None):
     if user_no:
         user_id = get_user_id(user_no)[0][0]
-    ret_count = get_repairing(user_id)
+        ret_count = get_repairing(user_id)
+    else:
+        ret_count = get_repairing()
     ret = ''
     if len(ret_count) > 0:
         for index in ret_count:
-            ret += str(index[0])+'|'+str(index[1])+'|'+str(index[2])+'|'\
-                +str(index[3])+'|'+str(index[4])+'|'+str(index[5])+'|'\
-                +str(index[6])+'|'+str(index[7])+'\n'
+            ret += str(index[0])+'|'+str(index[1])+'|'+str(index[3])+'|'\
+                +str(index[8])+'|'+str(index[6])+'|'+str(index[9])+'|'\
+                +str(index[10])+'\n'
     return ret
 
 def com_get_repair_info(user_no=None):
     if user_no:
         user_id = get_user_id(user_no)[0][0]
-    ret_count = get_repair_info(user_id)
+        ret_count = get_repair_info(user_id)
+    else:
+        ret_count = get_repairing()
     ret = ''
     if len(ret_count) > 0:
         for index in ret_count:
-            ret += str(index[0])+'|'+str(index[1])+'|'+str(index[2])+'|'\
-                +str(index[3])+'|'+str(index[4])+'|'+str(index[5])+'|'\
-                +str(index[6])+'|'+str(index[7])+'\n'
+            ret += str(index[0])+'|'+str(index[1])+'|'+str(index[3])+'|'\
+                +str(index[8])+'|'+str(index[6])+'|'+str(index[9])+'|'\
+                +str(index[10])+'|'+str(index[11])+'\n'
     return ret
 
+
+def com_admin_repair_info():
+    ret_count = get_admin_repair_info()
+    ret = ''
+    if len(ret_count) > 0:
+        for index in ret_count:
+            ret += str(index[0])+'|'+str(index[1])+'|'+str(index[3])+'|'\
+                +str(index[8])+'|'+str(index[6])+'|'+str(index[9])+'|'\
+                +str(index[10])
+            if str(index[11]):
+                ret += '|'+str(index[11])+'\n'
+            else:
+                ret += '|'+'正在维修'+'\n'
+    return ret
 
 def com_add_user_info(info):
     user_name, user_nickname, user_sex = info.split('\n')
@@ -188,13 +194,6 @@ def com_add_car_part(info):
     else:
         return False
 
-def com_update_car_part(info):
-    partId,partName, partNumber, partPrice = info.split('\n')
-    set_result = update_car_part(partId,partName, partNumber, None, 0, partPrice=0.0)
-    if set_result > 0:
-        return True
-    else:
-        return False
 
 def com_del_car_part(info):
     partId = info.split('\n')
@@ -205,9 +204,10 @@ def com_del_car_part(info):
         return False
 
 def com_add_repair_info(info, user_no):
-    repair_fault, repair_carName, repair_carNum, repair_carPhone, repair_status, repairDetails, partDetails = info.split('\n')
+    repair_carName, repair_carPhone, partDetails, repair_fault, repairDetails, repairMask = info.split('\n')
     repairingDate = get_curtime()
-    set_result = add_repair_info(user_no, repair_fault, repair_carName, repair_carNum, repair_carPhone, repair_status, repairDetails, partDetails,repairingDate)
+    user_id  = get_user_id(user_no)[0][0]
+    set_result = add_repair_info(user_id,repair_carName, repair_carPhone, partDetails, repair_fault, repairDetails, repairMask,repairingDate)
     if set_result > 0:
         return True
     else:
@@ -222,13 +222,6 @@ def com_change_repair_status(info):
     else:
         return False
 
-def com_update_repair_info(info):
-    repairId, repairName,partDetailsDict, repairDetails = info.split('\n')
-    set_result = update_repair_info(repairId, repairName,partDetailsDict, repairDetails)
-    if set_result > 0:
-        return True
-    else:
-        return False
 
 def com_del_repair_info(info):
     repairId = info.split('\n')

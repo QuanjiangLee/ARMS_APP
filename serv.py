@@ -7,10 +7,7 @@ import threading
 import select
 from threading import Thread
 from mylog import log, xtrace, error_log, get_curtime
-from common import send_info, reply_client, get_reply_info, kill_myself,com_check_name, com_check_passwd,\
-com_add_user_info,com_get_user_info, com_update_user_info, com_update_user_password, com_del_user_info, com_reset_user_password,\
-com_add_car_part, com_get_car_parts,com_update_car_part, com_del_car_part, com_get_repair_statistics,\
-com_add_repair_info,com_change_repair_status, com_get_repair_info, com_get_repairing, com_update_repair_info, com_del_repair_info
+from common import *
 HOST = "0.0.0.0"
 PORT = 50005
 TreadNum = 0
@@ -77,7 +74,7 @@ class MyThread(Thread):
             # 获取用户命令
             try:
                 cmd, info = get_reply_info(self.sock, user_no)
-                print("info+++++++++++",info,"++++++++++++cmd",cmd)
+                print("info信息:",info,"cmd信息:",cmd)
             except Exception as error:
                 self.disconnected = True
                 error_log("RECV INFO ERROR!")
@@ -97,13 +94,13 @@ class MyThread(Thread):
                     send_info(self.sock, "SUC", "WRONG SUC", user_no)
 
             elif "ARH" == cmd: #管理员查询所有工单
-                send_data = com_get_repair_info()
+                send_data = com_admin_repair_info()
                 if send_data:
                     send_info(self.sock,"ARH", send_data, user_no)
                 else:
                     send_info(self.sock,"ARH", "WRONG ARH", user_no)
             elif "SRH" == cmd: #维修工查询已完成工单
-                send_data = com_get_repairing(user_no)
+                send_data = com_get_repair_info(user_no)
                 if send_data:
                     send_info(self.sock,"SRH", send_data, user_no)
                 else:
@@ -150,12 +147,6 @@ class MyThread(Thread):
                     send_info(self.sock, "DPT", "WRONG DPT", user_no)
                 else:
                     send_info(self.sock, "DPT", "DPT OK", user_no)
-            elif "MPT" == cmd: 
-                if not com_update_car_part(info):
-                    send_info(self.sock, "MPT", "WRONG MPT", user_no)
-                else:
-                    send_info(self.sock, "MPT", "MPT OK", user_no)
-            
             elif "SRO" == cmd: #添加一个维修单
                 if not com_add_repair_info(info, user_no):
                     send_info(self.sock, "SRO", "WRONG SRO", user_no)
@@ -166,6 +157,11 @@ class MyThread(Thread):
                     send_info(self.sock, "CRS", "WRONG CRS", user_no)
                 else:
                     send_info(self.sock, "CRS", "CRS OK", user_no)
+            elif "DRO" == cmd: #删除一个维修单记录
+                if not com_del_repair_info(info):
+                    send_info(self.sock, "DRO", "WRONG DRO", user_no)
+                else:
+                    send_info(self.sock, "DRO", "DRO OK", user_no)
             elif "END" == cmd: #客户端下线
                 # record user log off
                 log("%s %s OFFLINE" % (user_no, self.hostIP))
