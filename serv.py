@@ -100,6 +100,7 @@ class MyThread(Thread):
                 else:
                     send_info(self.sock,"ARH", "WRONG ARH", user_no)
             elif "SRH" == cmd: #维修工查询已完成工单
+                print(user_no)
                 send_data = com_get_repair_info(user_no)
                 if send_data:
                     send_info(self.sock,"SRH", send_data, user_no)

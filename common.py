@@ -93,7 +93,6 @@ def com_get_user_info():
 def com_get_car_parts():
     ret_count = get_car_parts()
     ret = ''
-
     if len(ret_count) > 0:
         for index in ret_count:
             ret += str(index[0])+'|'+str(index[1])+'|'+str(index[2])+'|'\
@@ -117,7 +116,7 @@ def com_get_repairing(user_no=None):
                 +str(index[10])+'\n'
     return ret
 
-def com_get_repair_info(user_no=None):
+def com_get_repair_info(user_no):
     if user_no:
         user_id = get_user_id(user_no)[0][0]
         ret_count = get_repair_info(user_id)
@@ -163,8 +162,8 @@ def com_update_user_info(info):
         return False
 
 def com_update_user_password(info,user_no):
-    new_passwd = info.split("\n")[0]
-    set_result = update_user_password(user_no, new_passwd)
+    old_passwd, new_passwd = info.split("\n")
+    set_result = update_user_password(user_no, old_passwd, new_passwd)
     if set_result > 0:
         return True
     else:

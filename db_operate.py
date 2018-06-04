@@ -42,9 +42,9 @@ def update_user_info(user_id, user_name, user_nickname, user_sex, user_mask):
     ret = db_conn.updateMethods(dbStr)
     return ret   
 
-def update_user_password(user_no, new_passwd):
-    values= (user_no, new_passwd)
-    db_str = "update serviceApp_userinf set user_passwd='{1}' where user_name = '{0}';"
+def update_user_password(user_no, old_passwd, new_passwd):
+    values= (user_no, old_passwd, new_passwd)
+    db_str = "update serviceApp_userinf set user_passwd='{2}' where user_name = '{0}' and user_passwd='{1}';"
     dbStr = db_str.format( *values )
     print(dbStr)
     db_conn = DBMethods()
@@ -102,7 +102,7 @@ def del_car_part(partId):
 
 # repairPrice 通过carparts表查询 
  
-def add_repair_info(user_id,repair_carName, repair_carPhone, partDetails, repair_fault, repairDetails, repairMask='No mask',repairingDate):
+def add_repair_info(user_id,repair_carName, repair_carPhone, partDetails, repair_fault, repairDetails, repairMask,repairingDate):
     totalPrice = 0.0
     values= (user_id,repair_carName, repair_carPhone, partDetails, repair_fault, repairDetails, repairMask,totalPrice,repairingDate)
     db_str = "insert into serviceApp_repairinfo (personId_id, repair_carName, repair_carPhone, partDetails,repair_fault, repairDetails, repairMask, totalPrice, repairingDate) values ({0}, '{1}', '{2}', '{3}', '{4}','{5}','{6}',{7},'{8}');"
@@ -132,9 +132,10 @@ def get_repairPrice(partId):
     return ret
 
 def get_user_id(user_no):
-    values = (user_no)
-    db_str = "select user_id from serviceApp_userinf where user_name={0};"
-    dbStr = db_str.format( *values )
+    values = (user_no,)
+    print(user_no)
+    db_str = "select user_id from serviceApp_userinf where user_name='{0}';"
+    dbStr = db_str.format(*values)
     print(dbStr)
     db_conn = DBMethods()
     ret = db_conn.selectMethods(dbStr)
@@ -146,7 +147,7 @@ def get_repairing(user_id=None):
         db_str = "select * from serviceApp_repairinfo where repair_status=0;"
     else:
         db_str = "select * from serviceApp_repairinfo where personId_id={0} and repair_status=0;"
-        dbStr = db_str.format( *values )
+        dbStr = db_str.format( values )
     print(dbStr)
     db_conn = DBMethods()
     ret = db_conn.selectMethods(dbStr)
@@ -158,7 +159,7 @@ def get_repair_info(user_id=None):
         db_str = "select * from serviceApp_repairinfo where repair_status=1;"
     else:
         db_str = "select * from serviceApp_repairinfo where personId_id={0} and repair_status=1;"
-        dbStr = db_str.format( *values )
+        dbStr = db_str.format( values )
     print(dbStr)
     db_conn = DBMethods()
     ret = db_conn.selectMethods(dbStr)
