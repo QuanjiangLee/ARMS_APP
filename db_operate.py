@@ -70,9 +70,9 @@ def reset_user_password(user_id):
     return ret
 
 # 汽修零件增删改差
-def add_car_part(user_id, partName, partNumber, partType=None, partSize=0, partPrice=0.0):
-    values= (user_id, partName, partNumber, partType, partSize, partPrice)
-    db_str = "insert into serviceApp_carparts (personId_id, partName, partNumber, partType, partSize, partPrice) values ({0}, '{1}', {2}, '{3}', '{4}', {5});"
+def add_car_part( partName, partNumber, partPrice=0.0):
+    values= (partName, partNumber, partPrice)
+    db_str = "insert into serviceApp_carparts (partName, partNumber, partPrice) values ('{0}', {1}, {2});"
     dbStr = db_str.format( *values )
     print(dbStr)
     db_conn = DBMethods()

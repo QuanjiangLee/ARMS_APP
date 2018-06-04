@@ -1,0 +1,57 @@
+
+-- MySQL dump 10.16  Distrib 10.1.26-MariaDB, for debian-linux-gnu (x86_64)
+--
+-- Host: localhost    Database: serviceDb
+-- ------------------------------------------------------
+-- Server version       10.1.26-MariaDB-0+deb9u1
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+
+ CREATE TABLE `serviceApp_userinf` (
+  `user_id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_name` varchar(30) NOT NULL,
+  `user_nickname` varchar(30) NOT NULL,
+  `user_grant` tinyint(1) NOT NULL,
+  `user_sex` varchar(5) NOT NULL,
+  `user_mask` varchar(100) NOT NULL,
+  `user_passwd` varchar(100) NOT NULL,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8
+
+ CREATE TABLE `serviceApp_carparts` (
+  `partId` int(11) NOT NULL AUTO_INCREMENT,
+  `partName` varchar(40) NOT NULL,
+  `partNumber` int(11) NOT NULL,
+  `partPrice` double NOT NULL,
+  `partDate` datetime(6) NOT NULL,
+  PRIMARY KEY (`partId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+
+CREATE TABLE `serviceApp_repairinfo` (
+  `repairId` int(11) NOT NULL AUTO_INCREMENT,
+  `repair_fault` varchar(255) NOT NULL,
+  `repair_carName` varchar(40) NOT NULL,
+  `repair_carNum` varchar(40) NOT NULL,
+  `repair_carPhone` varchar(40) NOT NULL,
+  `repair_status` tinyint(1) NOT NULL,
+  `repairDetails` varchar(255) NOT NULL,
+  `partDetails` varchar(255) NOT NULL,
+  `totalPrice` double NOT NULL,
+  `repairingDate` varchar(40) NOT NULL,
+  `repairdDate` varchar(40) NOT NULL,
+  `personId_id` int(11) NOT NULL,
+  `repairMask` varchar(255) NOT NULL,
+  PRIMARY KEY (`repairId`),
+  KEY `serviceApp_repairinf_personId_id_f7fdc562_fk_serviceAp` (`personId_id`),
+  CONSTRAINT `serviceApp_repairinf_personId_id_f7fdc562_fk_serviceAp` FOREIGN KEY (`personId_id`) REFERENCES `serviceApp_userinf` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8

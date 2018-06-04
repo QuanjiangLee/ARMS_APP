@@ -97,8 +97,8 @@ def com_get_car_parts():
     if len(ret_count) > 0:
         for index in ret_count:
             ret += str(index[0])+'|'+str(index[1])+'|'+str(index[2])+'|'\
-                +'hah'+'|'+'100m'+'|'+str(index[5])+'|'\
-                +str(index[6])+'|'+str(index[7])+'\n'
+                +'|'+str(index[3])+'|'\
+                +str(index[4])+'\n'
     return ret
 
 
@@ -188,7 +188,7 @@ def com_reset_user_password(info):
 
 def com_add_car_part(info):
     partName, partNumber, partPrice = info.split('\n')
-    set_result = add_car_part(1, partName, partNumber, None, 0, partPrice)
+    set_result = add_car_part(partName, partNumber, partPrice)
     if set_result > 0:
         return True
     else:
@@ -196,7 +196,7 @@ def com_add_car_part(info):
 
 
 def com_del_car_part(info):
-    partId = info.split('\n')
+    partId = info.split('\n')[0]
     set_result = del_car_part(partId)
     if set_result > 0:
         return True
