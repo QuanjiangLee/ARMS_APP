@@ -44,7 +44,7 @@ def update_user_info(user_id, user_name, user_nickname, user_sex, user_mask):
 
 def update_user_password(user_no, old_passwd, new_passwd):
     values= (user_no, old_passwd, new_passwd)
-    db_str = "update serviceApp_userinf set user_passwd='{2}' where user_name = '{0}' and user_passwd='{1}';"
+    db_str = "update serviceApp_userinf set user_passwd=password('{2}') where user_name = '{0}' and user_passwd=password('{1}');"
     dbStr = db_str.format( *values )
     print(dbStr)
     db_conn = DBMethods()
@@ -70,9 +70,9 @@ def reset_user_password(user_id):
     return ret
 
 # 汽修零件增删改差
-def add_car_part( partName, partNumber, partPrice=0.0):
-    values= (partName, partNumber, partPrice)
-    db_str = "insert into serviceApp_carparts (partName, partNumber, partPrice) values ('{0}', {1}, {2});"
+def add_car_part( partName, partNumber, partPrice, partDate):
+    values= (partName, partNumber, partPrice, partDate)
+    db_str = "insert into serviceApp_carparts (partName, partNumber, partPrice, partDate) values ('{0}', {1}, {2}, '{3}');"
     dbStr = db_str.format( *values )
     print(dbStr)
     db_conn = DBMethods()
@@ -103,7 +103,12 @@ def del_car_part(partId):
 # repairPrice 通过carparts表查询 
  
 def add_repair_info(user_id,repair_carName, repair_carPhone, partDetails, repair_fault, repairDetails, repairMask,repairingDate):
-    totalPrice = 0.0
+    try:
+        partId, partNum = partDetails.split('*')
+        partPrice=get_repairPrice(int(partId))
+        totalPrice = partPrice * int(partNum)
+    except Exception:
+        totalPrice = 0.0
     values= (user_id,repair_carName, repair_carPhone, partDetails, repair_fault, repairDetails, repairMask,totalPrice,repairingDate)
     db_str = "insert into serviceApp_repairinfo (personId_id, repair_carName, repair_carPhone, partDetails,repair_fault, repairDetails, repairMask, totalPrice, repairingDate) values ({0}, '{1}', '{2}', '{3}', '{4}','{5}','{6}',{7},'{8}');"
     dbStr = db_str.format( *values )
@@ -140,6 +145,15 @@ def get_user_id(user_no):
     db_conn = DBMethods()
     ret = db_conn.selectMethods(dbStr)
     return ret 
+
+def get_user_name(user_id):
+    values = (user_id)
+    print(user_id)
+    db_str = "select user_name from serviceApp_userinf where user_id={0};"
+    dbStr = db_str.format(values)
+    print(dbStr)
+    db_conn = DBMethods()
+    ret = db_conn.selectMethods(dbStr)
 
 def get_repairing(user_id=None):
     values = (user_id)

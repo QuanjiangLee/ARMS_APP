@@ -98,20 +98,20 @@ class MyThread(Thread):
                 if send_data:
                     send_info(self.sock,"ARH", send_data, user_no)
                 else:
-                    send_info(self.sock,"ARH", "WRONG ARH", user_no)
+                    send_info(self.sock,"ARH", "null", user_no)
             elif "SRH" == cmd: #维修工查询已完成工单
                 print(user_no)
                 send_data = com_get_repair_info(user_no)
                 if send_data:
                     send_info(self.sock,"SRH", send_data, user_no)
                 else:
-                    send_info(self.sock,"SRH", "WRONG SRH", user_no)
+                    send_info(self.sock,"SRH", "null", user_no)
             elif "SRI" == cmd: # 维修工查询正在进行的工单
                 send_data = com_get_repairing(user_no)
                 if send_data:
                     send_info(self.sock,"SRI", send_data, user_no)
                 else:
-                    send_info(self.sock,"SRI", "WRONG SRI", user_no)
+                    send_info(self.sock,"SRI", "null", user_no)
             elif "AUC" == cmd: #添加用户信息
                 if not com_add_user_info(info):
                     send_info(self.sock, "AUC","WRONG AUC", user_no)

@@ -111,9 +111,9 @@ def com_get_repairing(user_no=None):
     ret = ''
     if len(ret_count) > 0:
         for index in ret_count:
-            ret += str(index[0])+'|'+str(index[1])+'|'+str(index[3])+'|'\
-                +str(index[8])+'|'+str(index[6])+'|'+str(index[9])+'|'\
-                +str(index[10])+'\n'
+            ret += str(index[0])+'|'+user_no+'|'+str(index[2])+'|'+str(index[7])+'|'\
+                +'正在维修'+'|'+str(index[8])+'|'+str(index[9])+'|'\
+                +'未完成'+'\n'
     return ret
 
 def com_get_repair_info(user_no):
@@ -125,24 +125,30 @@ def com_get_repair_info(user_no):
     ret = ''
     if len(ret_count) > 0:
         for index in ret_count:
-            ret += str(index[0])+'|'+str(index[1])+'|'+str(index[3])+'|'\
-                +str(index[8])+'|'+str(index[6])+'|'+str(index[9])+'|'\
-                +str(index[10])+'|'+str(index[11])+'\n'
+            ret += str(index[0])+'|'+user_no+'|'+str(index[2])+'|'+str(index[7])+'|'\
+                +'维修完成'+'|'+str(index[8])+'|'+str(index[9])+'|'\
+                +str(index[10])+'\n'
     return ret
 
 
 def com_admin_repair_info():
     ret_count = get_admin_repair_info()
     ret = ''
+    status='unknow'
     if len(ret_count) > 0:
         for index in ret_count:
-            ret += str(index[0])+'|'+str(index[1])+'|'+str(index[3])+'|'\
-                +str(index[8])+'|'+str(index[6])+'|'+str(index[9])+'|'\
-                +str(index[10])
-            if str(index[11]):
-                ret += '|'+str(index[11])+'\n'
+            user_no=get_user_name(int(index[11]))
+            if index[5]:
+                if index[5] == 0:
+                    status='正在维修'
+                else:
+                    status='维修完成'
+            ret += str(index[0])+'|'+user_no+'|'+str(index[2])+'|'+str(index[7])+'|'\
+                +status+'|'+str(index[8])+'|'+str(index[9])
+            if str(index[10]):
+                ret += '|'+str(index[10])+'\n'
             else:
-                ret += '|'+'正在维修'+'\n'
+                ret += '|'+'未完成维修'+'\n'
     return ret
 
 def com_add_user_info(info):
@@ -187,7 +193,8 @@ def com_reset_user_password(info):
 
 def com_add_car_part(info):
     partName, partNumber, partPrice = info.split('\n')
-    set_result = add_car_part(partName, partNumber, partPrice)
+    partDate = get_curtime()
+    set_result = add_car_part(partName, partNumber, partPrice, partDate)
     if set_result > 0:
         return True
     else:
