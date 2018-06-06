@@ -135,14 +135,15 @@ def com_admin_repair_info():
     ret_count = get_admin_repair_info()
     ret = ''
     status='unknow'
+    user_no='unknow'
     if len(ret_count) > 0:
         for index in ret_count:
-            user_no=get_user_name(int(index[11]))
-            if index[5]:
-                if index[5] == 0:
-                    status='正在维修'
-                else:
-                    status='维修完成'
+            print(index)
+            user_no=get_user_name(int(index[11]))[0][0]
+            if index[5] == 0:
+                status='正在维修'
+            else:
+                status='维修完成'
             ret += str(index[0])+'|'+user_no+'|'+str(index[2])+'|'+str(index[7])+'|'\
                 +status+'|'+str(index[8])+'|'+str(index[9])
             if str(index[10]):

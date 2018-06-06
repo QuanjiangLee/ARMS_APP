@@ -154,6 +154,7 @@ def get_user_name(user_id):
     print(dbStr)
     db_conn = DBMethods()
     ret = db_conn.selectMethods(dbStr)
+    return ret
 
 def get_repairing(user_id=None):
     values = (user_id)

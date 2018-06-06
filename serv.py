@@ -85,13 +85,13 @@ class MyThread(Thread):
                 if send_data:
                     send_info(self.sock, "SPT", send_data, user_no)
                 else:
-                    send_info(self.sock, "SPT", "WRONG SPT", user_no)
+                    send_info(self.sock, "SPT", "null", user_no)
             elif "SUC" == cmd: #查询用户信息
                 send_data = com_get_user_info()
                 if send_data:
                     send_info(self.sock, "SUC",send_data, user_no)
                 else:
-                    send_info(self.sock, "SUC", "WRONG SUC", user_no)
+                    send_info(self.sock, "SUC", "null", user_no)
 
             elif "ARH" == cmd: #管理员查询所有工单
                 send_data = com_admin_repair_info()
@@ -158,11 +158,11 @@ class MyThread(Thread):
                     send_info(self.sock, "CRS", "WRONG CRS", user_no)
                 else:
                     send_info(self.sock, "CRS", "CRS OK", user_no)
-            elif "DRO" == cmd: #删除一个维修单记录
+            elif "DRH" == cmd: #删除一个维修单记录
                 if not com_del_repair_info(info):
-                    send_info(self.sock, "DRO", "WRONG DRO", user_no)
+                    send_info(self.sock, "DRH", "WRONG DRH", user_no)
                 else:
-                    send_info(self.sock, "DRO", "DRO OK", user_no)
+                    send_info(self.sock, "DRH", "DRH OK", user_no)
             elif "END" == cmd: #客户端下线
                 # record user log off
                 log("%s %s OFFLINE" % (user_no, self.hostIP))
