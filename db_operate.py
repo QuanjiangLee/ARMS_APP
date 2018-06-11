@@ -104,12 +104,18 @@ def del_car_part(partId):
  
 def add_repair_info(user_id,repair_carName, repair_carPhone, partDetails, repair_fault, repairDetails, repairMask,repairingDate):
     try:
+        #print(partDetails)
         partId, partNum = partDetails.split('*')
-        partPrice=get_repairPrice(int(partId))
+        #print(partId, partNum)
+        partPrice=get_repairPrice(int(partId))[0][0]
+        #print(partPrice)
+        partName=get_part_name(int(partId))[0][0]
         totalPrice = partPrice * int(partNum)
+        #print(totalPrice)
+        part=partName+'x'+partNum
     except Exception:
         totalPrice = 0.0
-    values= (user_id,repair_carName, repair_carPhone, partDetails, repair_fault, repairDetails, repairMask,totalPrice,repairingDate)
+    values= (user_id,repair_carName, repair_carPhone, part, repair_fault, repairDetails, repairMask,totalPrice,repairingDate)
     db_str = "insert into serviceApp_repairinfo (personId_id, repair_carName, repair_carPhone, partDetails,repair_fault, repairDetails, repairMask, totalPrice, repairingDate) values ({0}, '{1}', '{2}', '{3}', '{4}','{5}','{6}',{7},'{8}');"
     dbStr = db_str.format( *values )
     print(dbStr)
@@ -130,7 +136,7 @@ def change_repair_status(repairId, repairdDate):
 def get_repairPrice(partId):
     values = (partId)
     db_str = "select partPrice from serviceApp_carparts where partId={0};"
-    dbStr = db_str.format( *values )
+    dbStr = db_str.format( values )
     print(dbStr)
     db_conn = DBMethods()
     ret = db_conn.selectMethods(dbStr)
@@ -154,6 +160,17 @@ def get_user_name(user_id):
     print(dbStr)
     db_conn = DBMethods()
     ret = db_conn.selectMethods(dbStr)
+    return ret
+
+
+def get_part_name(partId):
+    values = (partId)
+    db_str = "select partName from serviceApp_carparts where partId={0};"
+    dbStr = db_str.format(values)
+    print(dbStr)
+    db_conn = DBMethods()
+    ret = db_conn.selectMethods(dbStr)
+    print(ret)
     return ret
 
 def get_repairing(user_id=None):
